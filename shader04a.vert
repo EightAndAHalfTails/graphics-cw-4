@@ -17,6 +17,7 @@ out vertexData
 	vec3 pos;
 	vec3 normal;
 	vec4 color;
+	vec2 tex;
 }vertex;
 
 /////////////
@@ -29,7 +30,8 @@ void main()
 	vertex.color = vec4(1.0,0.0,0.0,1.0);
 
 	//TODO
-	//Exercise 4a: get texture coordiantes from gl_MultiTexCoord0
+	//Exercise 4a: get texture coordinates from gl_MultiTexCoord0
+	vertex.tex = gl_MultiTexCoord0.st;
 
 
 }

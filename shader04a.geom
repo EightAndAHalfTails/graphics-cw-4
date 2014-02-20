@@ -27,6 +27,7 @@ in vertexData
 	vec3 pos;
 	vec3 normal;
 	vec4 color;
+	vec2 tex;
 }vertices[];
 
 out fragmentData
@@ -34,6 +35,7 @@ out fragmentData
 	vec3 vpos;
 	vec3 normal;
 	vec4 color;
+	vec2 tex;
 }frag;   
 
 
@@ -48,6 +50,7 @@ void main()
 			frag.vpos = vertices[i].pos;
 			frag.normal = vertices[i].normal;
 			frag.color = vertices[i].color;
+			frag.tex = vertices[i].tex;
 			
 			EmitVertex();
 		}

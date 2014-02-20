@@ -12,38 +12,41 @@ uniform sampler2D textureImage;
 //Exercise 4a: extend the IO structures with texture coordinates
 in fragmentData
 {
-	vec3 vpos;
-	vec3 normal;
-	vec4 color;
+  vec3 vpos;
+  vec3 normal;
+  vec4 color;
+  vec2 tex;
 }frag;
 
 ///////////////
 
 void main()
 {
-	//TODO
-	//Exercise 4a:  read texture with texture2D(...) and
-	//              integrate texture color into shading
-	vec4 outcol = frag.color;
+  //TODO
+  //Exercise 4a:  read texture with texture2D(...) and
+  //              integrate texture color into shading
+  vec4 outcol = frag.color;
+  vec4 texcol = texture2D(textureImage, frag.tex);
+  outcol = texcol;
+    
+  // Phong shading
+  vec3 v = frag.vpos;
+  vec3 N = frag.normal;
+  vec3 L = normalize(gl_LightSource[0].position.xyz - v);
+  vec3 E = normalize(-v);
+  vec3 R = normalize(reflect(-L,N));  
+  float distance = length(gl_LightSource[0].position.xyz - v);
+  float attenuation = 1.0 / (gl_LightSource[0].constantAttenuation
+			     + gl_LightSource[0].linearAttenuation * distance
+			     + gl_LightSource[0].quadraticAttenuation * distance * distance);
 
-	// Phong shading
-	vec3 v = frag.vpos;
-	vec3 N = frag.normal;
-	vec3 L = normalize(gl_LightSource[0].position.xyz - v);
-	vec3 E = normalize(-v);
-	vec3 R = normalize(reflect(-L,N));  
-	float distance = length(gl_LightSource[0].position.xyz - v);
-	float attenuation = 1.0 / (gl_LightSource[0].constantAttenuation
-		+ gl_LightSource[0].linearAttenuation * distance
-		+ gl_LightSource[0].quadraticAttenuation * distance * distance);
+  vec4 ambient = outcol;
 
-	vec4  ambient = outcol;
+  vec4 diffuse = attenuation * clamp( diffuseColor * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
+  vec4 spec = attenuation * clamp ( specularColor * pow(max(dot(R,E),0.0),0.3*specularExponent) , 0.0, 1.0 );
 
-	vec4 diffuse = attenuation * clamp( diffuseColor * max(dot(N,L), 0.0), 0.0, 1.0 ) ;
-	vec4 spec = attenuation * clamp ( specularColor * pow(max(dot(R,E),0.0),0.3*specularExponent) , 0.0, 1.0 );
+  outcol = ambient + diffuse + spec;
 
-	outcol = ambient + diffuse + spec;
-
-	gl_FragColor = outcol;
+  gl_FragColor = outcol;
 
 }
